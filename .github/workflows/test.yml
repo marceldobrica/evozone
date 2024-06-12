@@ -1,0 +1,83 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  symfony-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      web:
+        image: nginx
+        ports:
+          - "80:80"
+        env:
+          NGINX_HOST: internship.local
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - uses: actions/checkout@v2
+      - name: Copy .env.test.local
+        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        id: yarn-cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-cache-node-modules-
+      - name: Yarn install
+        if: steps.yarn-cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Yarn build
+        run: yarn run encore production
+      - name: Yarn build
+        run: yarn run encore production
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: build
+          path: public/build
+      - name: Verify MySQL connection
+        run: |
+          mysql --version
+          mysql --host 127.0.0.1 --port 3306 -uroot -proot -e "SHOW DATABASES"
+      - name: Migrations and load fixtures to database
+        env:
+          DATABASE_URL: mysql://root:root@127.0.0.1:3306/testing?serverVersion=8.0&charset=utf8mb4
+        run: |
+          bin/console --env=test d:d:c --no-interaction
+          bin/console --env=test d:m:m --no-interaction
+          bin/console --env=test d:f:load --no-interaction
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit --coverage-clover ./coverage.xml
+      - name: Execute CodeSniffer tests
+        run: vendor/bin/phpcs --standard=PSR12 --ignore=tests/bootstrap.php src tests
+      - name: Execute PhpStan tests
+        run: vendor/bin/phpstan analyse src tests
+      - name: Check test coverage
+        id: test-coverage
+        uses: johanvanhelden/gha-clover-test-coverage-check@v1
+        with:
+          percentage: "5"
+          filename: "coverage.xml"
