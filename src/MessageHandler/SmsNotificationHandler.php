@@ -7,6 +7,8 @@ namespace App\MessageHandler;
 use App\HttpClient\HttpClientSmsUser;
 use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class SmsNotificationHandler implements MessageHandlerInterface
 {
@@ -17,7 +19,11 @@ class SmsNotificationHandler implements MessageHandlerInterface
         $this->httpClientSmsUser = $httpClientSmsUser;
     }
 
-    public function __invoke(SmsNotification $message)
+    /**
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function __invoke(SmsNotification $message): void
     {
         $this->httpClientSmsUser->sendSms($message->getPhone(), $message->getContent());
     }
