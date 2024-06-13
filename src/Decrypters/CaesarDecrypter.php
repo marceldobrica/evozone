@@ -6,7 +6,10 @@ namespace App\Decrypters;
 
 class CaesarDecrypter
 {
-    public function cipher($ch, $key)
+    /**
+     * @return mixed|string
+     */
+    public function cipher($ch, int $key)
     {
         if (!ctype_alpha($ch)) {
             return $ch;
@@ -16,10 +19,9 @@ class CaesarDecrypter
         return chr((ord($ch) + $key - $offset) % 26 + $offset);
     }
 
-    public function encipher($input, $key)
+    public function encipher(string $input, int $key): string
     {
         $output = "";
-
         $inputArr = str_split($input);
         foreach ($inputArr as $ch) {
             $output .= $this->cipher($ch, $key);
@@ -28,7 +30,7 @@ class CaesarDecrypter
         return $output;
     }
 
-    public function decipher($input, $key)
+    public function decipher(string $input, int $key): string
     {
         return $this->encipher($input, 26 - $key);
     }
