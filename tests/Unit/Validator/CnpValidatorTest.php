@@ -6,11 +6,28 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\Cnp;
 use App\Validator\CnpValidator;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CnpValidatorTest extends ConstraintValidatorTestCase
 {
+    public function setUp(): void
+    {
+        $this->constraint = $this->createMock(Constraint::class);
+
+        parent::setUp();
+    }
+
+    public function testTypeException(): void
+    {
+        $cnp = '1660713034972';
+
+        $this->expectException(UnexpectedTypeException::class);
+        $this->validator->validate($cnp, $this->constraint);
+    }
+
     public function testCnpLength(): void
     {
         $cnp = '1234';

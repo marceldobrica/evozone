@@ -8,6 +8,7 @@ use App\Entity\Programme;
 use App\Validator\ProgrammeDateTimeDifference;
 use App\Validator\ProgrammeDateTimeDifferenceValidator;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProgrammeDateTimeDifferenceValidatorTest extends ConstraintValidatorTestCase
@@ -54,5 +55,21 @@ class ProgrammeDateTimeDifferenceValidatorTest extends ConstraintValidatorTestCa
                 '{{ maxTimeMin }}' => '360'
             ])->assertRaised();
         }
+    }
+
+    public function testUnexpectedTypeExceptionValue(): void
+    {
+        $this->expectException(UnexpectedTypeException::class);
+        $this->validator->validate('someText', new ProgrammeDateTimeDifference());
+    }
+
+    public function testUnexpectedTypeExceptionConstraint(): void
+    {
+        $programmeNormal = new Programme();
+        $programmeNormal->setStartDate(new \DateTime('+5minutes'));
+        $programmeNormal->setEndDate(new \DateTime('+75minutes'));
+
+        $this->expectException(UnexpectedTypeException::class);
+        $this->validator->validate($programmeNormal, $this->constraint);
     }
 }
