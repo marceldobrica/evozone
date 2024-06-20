@@ -21,7 +21,6 @@ class UsersCreatedByRoleBucket
     public function get(): \Generator
     {
         $total = array_sum($this->accountsCreatedByRole);
-
         foreach ($this->accountsCreatedByRole as $key => $item) {
             $usersCreatedByRole = new UsersCreatedByRole($key);
             $usersCreatedByRole->setCount($item);

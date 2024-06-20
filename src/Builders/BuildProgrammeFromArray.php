@@ -6,6 +6,7 @@ namespace App\Builders;
 
 use App\Entity\Programme;
 use App\Exception\NotAbleToAssignRoomException;
+use App\Exception\NotValidProgrammeEntryException;
 use App\Repository\RoomRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -25,6 +26,10 @@ class BuildProgrammeFromArray implements LoggerAwareInterface
         $this->roomRepository = $roomRepository;
     }
 
+    /**
+     * @throws NotAbleToAssignRoomException
+     * @throws NotValidProgrammeEntryException
+     */
     public function build(array $programmeArray): ?Programme
     {
         $programme = new Programme();
@@ -34,9 +39,7 @@ class BuildProgrammeFromArray implements LoggerAwareInterface
         $programme->setEndDate(\DateTime::createFromFormat('d.m.Y H:i', $programmeArray['endDate']));
         $programme->isOnline = $programmeArray['isOnline'];
         $programme->maxParticipants = $programmeArray['maxParticipants'];
-
         $programme->setTrainer(null);
-
         $room = $this->roomRepository->getRoomForProgramme(
             \DateTime::createFromFormat('d.m.Y H:i', $programmeArray['startDate']),
             \DateTime::createFromFormat('d.m.Y H:i', $programmeArray['endDate']),
@@ -58,7 +61,7 @@ class BuildProgrammeFromArray implements LoggerAwareInterface
             $message = 'Not valid programme entry';
             $this->logger->warning($message, ['program' => \json_encode($programmeArray)]);
 
-            throw new \Exception($message);
+            throw new NotValidProgrammeEntryException();
         }
 
         return $programme;

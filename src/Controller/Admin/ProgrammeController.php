@@ -98,7 +98,7 @@ class ProgrammeController extends AbstractController
                     $programme->setTrainer(null);
                     $this->addFlash(
                         'warning',
-                        'The choosed trainer is already busy! We have set trainer to null!'
+                        'The picked trainer is already busy! We have set trainer to null!'
                     );
                 }
             }

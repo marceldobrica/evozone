@@ -47,8 +47,6 @@ class BucketingCollection
         if ($decodedData->message === "User created") {
             $role = $decodedData->context->roles[0];
             $this->usersCreatedByRoleBucket->add(new UsersCreatedByRole($role));
-
-            return;
         }
     }
 }

@@ -13,6 +13,7 @@ class CaesarDecrypter
         }
 
         $offset = ord(ctype_upper($ch) ? 'A' : 'a');
+
         return chr((ord($ch) + $key - $offset) % 26 + $offset);
     }
 

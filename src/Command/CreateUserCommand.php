@@ -92,9 +92,7 @@ class CreateUserCommand extends Command
         }
 
         $this->userRepository->add($user);
-
         $this->dispatcher->dispatch(new UserCreatedEvent($user), UserCreatedEvent::NAME);
-
         $io->success('You have created an user');
 
         return self::SUCCESS;

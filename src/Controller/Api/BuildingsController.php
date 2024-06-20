@@ -38,7 +38,6 @@ class BuildingsController implements LoggerAwareInterface
     public function createBuildingAction(BuildingDto $buildingDto): Response
     {
         $building = Building::createFromDto($buildingDto);
-
         $errors = $this->validator->validate($building);
         if (count($errors) > 0) {
             return $this->returnValidationErrors($errors);
@@ -49,7 +48,6 @@ class BuildingsController implements LoggerAwareInterface
         $this->entityManager->refresh($building);
 
         $newBuildingDto = BuildingDto::createFromBuilding($building);
-
         $this->logger->info('A Building was registered and saved in DB');
 
         return new JsonResponse($newBuildingDto, Response::HTTP_CREATED);

@@ -66,7 +66,7 @@ class ImportProgrammeFromCsvCommand extends Command
                 'output-folder',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'output folder for unimported rows'
+                'output folder for un-imported rows'
             );
     }
 
@@ -125,9 +125,10 @@ class ImportProgrammeFromCsvCommand extends Command
     /**
      * @param resource $readHandler
      * @param resource $writeHandler
-     * @throws InvalidCSVHeaderException
+     * @throws InvalidCSVHeaderException|NotAbleToAssignRoomException
+     * @throws \Exception
      */
-    private function handleResources($readHandler, $writeHandler): string
+    private function handleResources($readHandler, $writeHandler): void
     {
         $receivedHeader = fgets($readHandler);
         if ($receivedHeader !== "Name|Description|Start date|End date|Online|MaxParticipants\n") {
@@ -143,8 +144,6 @@ class ImportProgrammeFromCsvCommand extends Command
                 $this->wrongRows++;
             }
         }
-
-        return 'message';
     }
 
     private function verifyRow(array $receivedRow): bool
@@ -185,6 +184,9 @@ class ImportProgrammeFromCsvCommand extends Command
         return true;
     }
 
+    /**
+     * @throws NotAbleToAssignRoomException
+     */
     private function writeToDatabase(array $row): void
     {
         $programme = new Programme();
@@ -207,7 +209,6 @@ class ImportProgrammeFromCsvCommand extends Command
         }
 
         $programme->setRoom($room);
-
         $this->programmeRepository->add($programme);
     }
 

@@ -58,7 +58,7 @@ class ImportProgrammeFromUrlCommand extends Command
                 $io->success('You have created the programme: ' . $programme->name);
                 $this->programmeRepository->add($programme);
             } catch (\Exception $e) {
-                $io->error('You were not able to created the programme: ' . $programmeArray['name']);
+                $io->error('You were not able to create the programme: ' . $programmeArray['name']);
             }
         }
 
