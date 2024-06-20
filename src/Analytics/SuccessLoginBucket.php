@@ -20,7 +20,7 @@ class SuccessLoginBucket
 
     public function get(): \Generator
     {
-        arsort($this->apiLogins, SORT_NUMERIC);
+        \arsort($this->apiLogins, SORT_NUMERIC);
         foreach ($this->apiLogins as $key => $item) {
             $apiLogin = new SuccessLogin($key);
             $apiLogin->setLoginCounts($item);
