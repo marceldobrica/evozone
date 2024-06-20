@@ -32,19 +32,19 @@ class BucketingCollection
         $email = $decodedData->context->username;
         $dateKey = (new \DateTime($decodedData->datetime))->format('d.m.Y');
 
-        if ($decodedData->message === "Success login") {
+        if ("Success login" === $decodedData->message) {
             $this->successLoginBucket->add(new SuccessLogin($email));
 
             return;
         }
 
-        if ($decodedData->message === "Admin success login") {
+        if ("Admin success login" === $decodedData->message) {
             $this->adminSuccessLoginBucket->add(new AdminSuccessLogin($dateKey));
 
             return;
         }
 
-        if ($decodedData->message === "User created") {
+        if ("User created" === $decodedData->message) {
             $role = $decodedData->context->roles[0];
             $this->usersCreatedByRoleBucket->add(new UsersCreatedByRole($role));
 

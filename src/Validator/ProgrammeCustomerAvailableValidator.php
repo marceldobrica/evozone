@@ -50,7 +50,7 @@ class ProgrammeCustomerAvailableValidator extends ConstraintValidator
 
                 return;
             }
-            if (count($resultCustomer) == 1 && $resultCustomer[0]['programmeid'] !== $value->getId()) {
+            if (count($resultCustomer) == 1 && $value->getId() !== $resultCustomer[0]['programmeid']) {
                 $this->context->buildViolation($constraint->message)->addViolation();
 
                 return;

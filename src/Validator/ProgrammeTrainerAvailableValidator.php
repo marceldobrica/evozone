@@ -46,7 +46,7 @@ class ProgrammeTrainerAvailableValidator extends ConstraintValidator
         );
 
         if (
-            (count($resultTrainer) == 1 && $resultTrainer[0]['programmeid'] === $value->getId()) ||
+            (count($resultTrainer) == 1 && $value->getId() === $resultTrainer[0]['programmeid']) ||
             empty($resultTrainer) &&
             empty($resultCustomer)
         ) {

@@ -20,7 +20,7 @@ class PasswordValidator extends ConstraintValidator
         }
 
         if (
-            (!empty($value)) && ($value === trim($value)) && (\strpos($value, ' ') === false) &&
+            (!empty($value)) && (trim($value) === $value) && !\str_contains($value, ' ') &&
             preg_match('/^(?=.*?[A-Z])(?=.*?[#?!@$%^&*-]).{8,}$/', $value, $matches)
         ) {
             return;

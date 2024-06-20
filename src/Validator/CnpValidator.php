@@ -42,10 +42,10 @@ class CnpValidator extends ConstraintValidator
             if ($rest < 10) {
                 $cComponent = $rest;
             }
-            if ($rest == 10) {
+            if (10 == $rest) {
                 $cComponent = 1;
             }
-            if ($cComponent === intval($matches[7])) {
+            if (intval($matches[7]) === $cComponent) {
                 return;
             }
         }

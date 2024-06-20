@@ -39,7 +39,7 @@ class ProgrammeRoomOccupiedValidator extends ConstraintValidator
             return;
         }
 
-        if (count($result) == 1 && $result[0]['programmeid'] === $value->getId()) {
+        if (count($result) == 1 && $value->getId() === $result[0]['programmeid']) {
             return;
         }
 
